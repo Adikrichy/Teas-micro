@@ -1,0 +1,36 @@
+server:
+  port: 8888  # Порт, на котором будет работать Config Server
+
+spring:
+  application:
+    name: config-server  # Имя приложения для логирования и других нужд
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Adikrichy/tea-shop-config.git  # URL репозитория с конфигурациями
+          default-label: main  # Основная ветка репозитория
+          search-paths: '{application}'  # Путь к конфигурационным файлам (например, для product-service, order-service)
+          clone-on-start: true  # Клонировать репозиторий при запуске
+          timeout: 10  # Таймаут при подключении к Git-репозиторию
+
+  # Отключаем автоматическую настройку DataSource, если база данных не используется
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/  # Адрес Eureka для регистрации Config Server
+  instance:
+    preferIpAddress: true  # Использование IP-адреса для регистрации в Eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics  # Открываем дополнительные метрики и информацию о сервисе
+  endpoint:
+    health:
+      show-details: always  # Показываем полные детали состояния здоровья

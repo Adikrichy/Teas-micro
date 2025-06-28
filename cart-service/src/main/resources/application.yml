@@ -1,0 +1,54 @@
+server:
+  port: 8084
+
+spring:
+  data:
+    redis:
+      url: redis://localhost:6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 2.0
+  cloud:
+    config:
+      enabled: false
+
+  # Настройка PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/teashop_cart  # Указываем URL для PostgreSQL
+    username: ${DB_USERNAME:postgres}                    # Укажите ваш логин к базе данных
+    password: ${DB_PASSWORD:postgres}                      # Укажите ваш пароль
+    driver-class-name: org.postgresql.Driver         # Драйвер PostgreSQL
+  jpa:
+    hibernate:
+      ddl-auto: update                                # Это автоматически обновляет схему базы данных при запуске (можно заменить на `validate`, если не хотите изменений в схеме)
+    show-sql: true                                    # Показывать SQL запросы в логе для отладки
+    properties:
+      hibernate:
+        format_sql: true                              # Форматировать SQL запросы для лучшей читаемости
+        dialect: org.hibernate.dialect.PostgreSQLDialect  # Указываем диалект PostgreSQL для Hibernate
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
